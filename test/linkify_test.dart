@@ -11,175 +11,165 @@ void expectListEqual(List actual, List expected) {
       expected,
     ),
     true,
-    reason: "Expected $actual to be $expected",
+    reason: 'Expected $actual to be $expected',
   );
 }
 
 void main() {
-  test('Parses only text', () {
+  test('Parses only text', () async {
     expectListEqual(
-      linkify("Lorem ipsum dolor sit amet"),
-      [TextElement("Lorem ipsum dolor sit amet")],
+      await linkify('Lorem ipsum dolor sit amet'),
+      [TextElement('Lorem ipsum dolor sit amet')],
     );
   });
 
-  test('Parses only text with multiple lines', () {
+  test('Parses only text with multiple lines', () async {
     expectListEqual(
-      linkify("Lorem ipsum\ndolor sit amet"),
-      [TextElement("Lorem ipsum\ndolor sit amet")],
+      await linkify('Lorem ipsum\ndolor sit amet'),
+      [TextElement('Lorem ipsum\ndolor sit amet')],
     );
   });
 
-  test('Parses only link', () {
+  test('Parses only link', () async {
     expectListEqual(
-      linkify("https://example.com"),
-      [UrlElement("https://example.com", "example.com")],
+      await linkify('https://example.com'),
+      [UrlElement('https://example.com', 'example.com')],
     );
 
     expectListEqual(
-      linkify("https://www.example.com",
-          options: LinkifyOptions(removeWww: true)),
-      [UrlElement("https://www.example.com", "example.com")],
-    );
-  });
-
-  test('Parses only link with no humanize', () {
-    expectListEqual(
-      linkify("https://example.com", options: LinkifyOptions(humanize: false)),
-      [UrlElement("https://example.com")],
+      await linkify('https://www.example.com', options: LinkifyOptions(removeWww: true)),
+      [UrlElement('https://www.example.com', 'example.com')],
     );
   });
 
-  test('Parses only link with removeWwww', () {
+  test('Parses only link with no humanize', () async {
     expectListEqual(
-      linkify(
-        "https://www.example.com",
+      await linkify('https://example.com', options: LinkifyOptions(humanize: false)),
+      [UrlElement('https://example.com')],
+    );
+  });
+
+  test('Parses only link with removeWwww', () async {
+    expectListEqual(
+      await linkify(
+        'https://www.example.com',
         options: LinkifyOptions(removeWww: true),
       ),
-      [UrlElement("https://www.example.com", "example.com")],
+      [UrlElement('https://www.example.com', 'example.com')],
     );
   });
 
-  test('Parses only links with space', () {
+  test('Parses only links with space', () async {
     expectListEqual(
-      linkify("https://example.com https://google.com"),
+      await linkify('https://example.com https://google.com'),
       [
-        UrlElement("https://example.com", "example.com"),
-        TextElement(" "),
-        UrlElement("https://google.com", "google.com"),
+        UrlElement('https://example.com', 'example.com'),
+        TextElement(' '),
+        UrlElement('https://google.com', 'google.com'),
       ],
     );
   });
 
-  test('Parses links with text', () {
+  test('Parses links with text', () async {
     expectListEqual(
-      linkify(
-        "Lorem ipsum dolor sit amet https://example.com https://google.com",
+      await linkify(
+        'Lorem ipsum dolor sit amet https://example.com https://google.com',
       ),
       [
-        TextElement("Lorem ipsum dolor sit amet "),
-        UrlElement("https://example.com", "example.com"),
-        TextElement(" "),
-        UrlElement("https://google.com", "google.com"),
+        TextElement('Lorem ipsum dolor sit amet '),
+        UrlElement('https://example.com', 'example.com'),
+        TextElement(' '),
+        UrlElement('https://google.com', 'google.com'),
       ],
     );
   });
 
-  test('Parses links with text with no humanize', () {
+  test('Parses links with text with no humanize', () async {
     expectListEqual(
-      linkify(
-        "Lorem ipsum dolor sit amet https://example.com https://google.com",
+      await linkify(
+        'Lorem ipsum dolor sit amet https://example.com https://google.com',
         options: LinkifyOptions(humanize: false),
       ),
       [
-        TextElement("Lorem ipsum dolor sit amet "),
-        UrlElement("https://example.com"),
-        TextElement(" "),
-        UrlElement("https://google.com"),
+        TextElement('Lorem ipsum dolor sit amet '),
+        UrlElement('https://example.com'),
+        TextElement(' '),
+        UrlElement('https://google.com'),
       ],
     );
   });
 
-  test('Parses links with text with newlines', () {
+  test('Parses links with text with newlines', () async {
     expectListEqual(
-      linkify(
-        "https://google.com\nLorem ipsum\ndolor sit amet\nhttps://example.com",
+      await linkify(
+        'https://google.com\nLorem ipsum\ndolor sit amet\nhttps://example.com',
       ),
       [
-        UrlElement("https://google.com", "google.com"),
-        TextElement("\nLorem ipsum\ndolor sit amet\n"),
-        UrlElement("https://example.com", "example.com"),
+        UrlElement('https://google.com', 'google.com'),
+        TextElement('\nLorem ipsum\ndolor sit amet\n'),
+        UrlElement('https://example.com', 'example.com'),
       ],
     );
   });
 
-  test('Parses email', () {
+  test('Parses email', () async {
     expectListEqual(
-      linkify("person@example.com"),
-      [EmailElement("person@example.com")],
+      await linkify('person@example.com'),
+      [EmailElement('person@example.com')],
     );
   });
 
-  test('Parses email and link', () {
+  test('Parses email and link', () async {
     expectListEqual(
-      linkify("person@example.com at https://google.com"),
+      await linkify('person@example.com at https://google.com'),
+      [EmailElement('person@example.com'), TextElement(' at '), UrlElement('https://google.com', 'google.com')],
+    );
+  });
+
+  test("Doesn't parses email and link with no linkifiers", () async {
+    expectListEqual(
+      await linkify('person@example.com at https://google.com', linkifiers: []),
       [
-        EmailElement("person@example.com"),
-        TextElement(" at "),
-        UrlElement("https://google.com", "google.com")
+        TextElement('person@example.com at https://google.com'),
       ],
     );
   });
 
-  test("Doesn't parses email and link with no linkifiers", () {
+  test('Parses loose URL', () async {
     expectListEqual(
-      linkify("person@example.com at https://google.com", linkifiers: []),
-      [
-        TextElement("person@example.com at https://google.com"),
-      ],
-    );
-  });
-
-  test('Parses loose URL', () {
-    expectListEqual(
-      linkify("example.com/test", options: LinkifyOptions(looseUrl: true)),
-      [UrlElement("http://example.com/test", "example.com/test")],
+      await linkify('example.com/test', options: LinkifyOptions(looseUrl: true)),
+      [UrlElement('http://example.com/test', 'example.com/test')],
     );
 
     expectListEqual(
-      linkify("www.example.com",
+      await linkify('www.example.com',
           options: LinkifyOptions(
             looseUrl: true,
             removeWww: true,
             defaultToHttps: true,
           )),
-      [UrlElement("https://www.example.com", "example.com")],
+      [UrlElement('https://www.example.com', 'example.com')],
     );
 
     expectListEqual(
-      linkify("https://example.com", options: LinkifyOptions(looseUrl: true)),
-      [UrlElement("https://example.com", "example.com")],
+      await linkify('https://example.com', options: LinkifyOptions(looseUrl: true)),
+      [UrlElement('https://example.com', 'example.com')],
     );
 
     expectListEqual(
-      linkify("https://example.com.", options: LinkifyOptions(looseUrl: true)),
-      [UrlElement("https://example.com", "example.com"), TextElement(".")],
+      await linkify('https://example.com.', options: LinkifyOptions(looseUrl: true)),
+      [UrlElement('https://example.com', 'example.com'), TextElement('.')],
     );
   });
 
-  test('Parses both loose and not URL on the same text', () {
+  test('Parses both loose and not URL on the same text', () async {
     expectListEqual(
-      linkify('example.com http://example.com',
-          options: LinkifyOptions(looseUrl: true)),
-      [
-        UrlElement('http://example.com', 'example.com'),
-        TextElement(' '),
-        UrlElement('http://example.com', 'example.com')
-      ],
+      await linkify('example.com http://example.com', options: LinkifyOptions(looseUrl: true)),
+      [UrlElement('http://example.com', 'example.com'), TextElement(' '), UrlElement('http://example.com', 'example.com')],
     );
 
     expectListEqual(
-      linkify(
+      await linkify(
           'This text mixes both loose urls like example.com and not loose urls like http://example.com and http://another.example.com',
           options: LinkifyOptions(looseUrl: true)),
       [
@@ -193,19 +183,16 @@ void main() {
     );
   });
 
-  test('Parses ending period', () {
+  test('Parses ending period', () async {
     expectListEqual(
-      linkify("https://example.com/test."),
-      [
-        UrlElement("https://example.com/test", "example.com/test"),
-        TextElement(".")
-      ],
+      await linkify('https://example.com/test.'),
+      [UrlElement('https://example.com/test', 'example.com/test'), TextElement('.')],
     );
   });
 
-  test('Parses CR correctly.', () {
+  test('Parses CR correctly.', () async {
     expectListEqual(
-      linkify('lorem\r\nipsum https://example.com'),
+      await linkify('lorem\r\nipsum https://example.com'),
       [
         TextElement('lorem\r\nipsum '),
         UrlElement('https://example.com', 'example.com'),
@@ -213,22 +200,22 @@ void main() {
     );
   });
 
-  test('Parses user tag', () {
+  test('Parses user tag', () async {
     expectListEqual(
-      linkify("@example"),
-      [UserTagElement("@example")],
+      await linkify('@example'),
+      [UserTagElement('@example')],
     );
   });
 
-  test('Parses email, link, and user tag', () {
+  test('Parses email, link, and user tag', () async {
     expectListEqual(
-      linkify("person@example.com at https://google.com @example"),
+      await linkify('person@example.com at https://google.com @example'),
       [
-        EmailElement("person@example.com"),
-        TextElement(" at "),
-        UrlElement("https://google.com", "google.com"),
-        TextElement(" "),
-        UserTagElement("@example")
+        EmailElement('person@example.com'),
+        TextElement(' at '),
+        UrlElement('https://google.com', 'google.com'),
+        TextElement(' '),
+        UserTagElement('@example')
       ],
     );
   });

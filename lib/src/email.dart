@@ -10,10 +10,10 @@ class EmailLinkifier extends Linkifier {
   const EmailLinkifier();
 
   @override
-  List<LinkifyElement> parse(elements, options) {
+  Future<List<LinkifyElement>> parse(elements, options) async {
     final list = <LinkifyElement>[];
 
-    elements.forEach((element) {
+    await Future.forEach(elements, (element) async {
       if (element is TextElement) {
         final match = _emailRegex.firstMatch(element.text);
 
@@ -34,10 +34,10 @@ class EmailLinkifier extends Linkifier {
           }
 
           if (text.isNotEmpty) {
-            list.addAll(parse([TextElement(text)], options));
+            list.addAll(await parse([TextElement(text)], options));
           }
         }
-      } else {
+      } else if (element is LinkifyElement) {
         list.add(element);
       }
     });
@@ -61,8 +61,5 @@ class EmailElement extends LinkableElement {
   bool operator ==(other) => equals(other);
 
   @override
-  bool equals(other) =>
-      other is EmailElement &&
-      super.equals(other) &&
-      other.emailAddress == emailAddress;
+  bool equals(other) => other is EmailElement && super.equals(other) && other.emailAddress == emailAddress;
 }

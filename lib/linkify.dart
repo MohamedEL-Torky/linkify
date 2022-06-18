@@ -4,8 +4,7 @@ import 'package:linkify/src/user_tag.dart';
 
 export 'package:linkify/src/email.dart' show EmailLinkifier, EmailElement;
 export 'package:linkify/src/url.dart' show UrlLinkifier, UrlElement;
-export 'package:linkify/src/user_tag.dart'
-    show UserTagLinkifier, UserTagElement;
+export 'package:linkify/src/user_tag.dart' show UserTagLinkifier, UserTagElement;
 
 abstract class LinkifyElement {
   final String text;
@@ -27,8 +26,7 @@ class LinkableElement extends LinkifyElement {
   bool operator ==(other) => equals(other);
 
   @override
-  bool equals(other) =>
-      other is LinkableElement && super.equals(other) && other.url == url;
+  bool equals(other) => other is LinkableElement && super.equals(other) && other.url == url;
 }
 
 /// Represents an element containing text
@@ -50,8 +48,7 @@ class TextElement extends LinkifyElement {
 abstract class Linkifier {
   const Linkifier();
 
-  List<LinkifyElement> parse(
-      List<LinkifyElement> elements, LinkifyOptions options);
+  Future<List<LinkifyElement>> parse(List<LinkifyElement> elements, LinkifyOptions options);
 }
 
 class LinkifyOptions {
@@ -90,11 +87,11 @@ const defaultLinkifiers = [_urlLinkifier, _emailLinkifier];
 ///
 /// Uses [linkTypes] to enable some types of links (URL, email).
 /// Will default to all (if `null`).
-List<LinkifyElement> linkify(
+Future<List<LinkifyElement>> linkify(
   String text, {
   LinkifyOptions options = const LinkifyOptions(),
   List<Linkifier> linkifiers = defaultLinkifiers,
-}) {
+}) async {
   var list = <LinkifyElement>[TextElement(text)];
 
   if (text.isEmpty) {
@@ -104,9 +101,8 @@ List<LinkifyElement> linkify(
   if (linkifiers.isEmpty) {
     return list;
   }
-
-  linkifiers.forEach((linkifier) {
-    list = linkifier.parse(list, options);
+  await Future.forEach(linkifiers, (Linkifier linkifier) async {
+    list = await linkifier.parse(list, options);
   });
 
   return list;

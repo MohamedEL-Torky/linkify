@@ -21,14 +21,11 @@ class UrlLinkifier extends Linkifier {
   const UrlLinkifier();
 
   @override
-  List<LinkifyElement> parse(elements, options) {
+  Future<List<LinkifyElement>> parse(elements, options) async {
     final list = <LinkifyElement>[];
-
-    elements.forEach((element) {
+    await Future.forEach(elements, (element) async {
       if (element is TextElement) {
-        var match = options.looseUrl
-            ? _looseUrlRegex.firstMatch(element.text)
-            : _urlRegex.firstMatch(element.text);
+        var match = options.looseUrl ? _looseUrlRegex.firstMatch(element.text) : _urlRegex.firstMatch(element.text);
 
         if (match == null) {
           list.add(element);
@@ -43,17 +40,15 @@ class UrlLinkifier extends Linkifier {
             var originalUrl = match.group(2)!;
             String? end;
 
-            if ((options.excludeLastPeriod) &&
-                originalUrl[originalUrl.length - 1] == ".") {
-              end = ".";
+            if ((options.excludeLastPeriod) && originalUrl[originalUrl.length - 1] == ".") {
+              end = '.';
               originalUrl = originalUrl.substring(0, originalUrl.length - 1);
             }
 
             var url = originalUrl;
 
             if (!originalUrl.startsWith(_protocolIdentifierRegex)) {
-              originalUrl = (options.defaultToHttps ? "https://" : "http://") +
-                  originalUrl;
+              originalUrl = (options.defaultToHttps ? 'https://' : 'http://') + originalUrl;
             }
 
             if ((options.humanize) || (options.removeWww)) {
@@ -78,10 +73,10 @@ class UrlLinkifier extends Linkifier {
           }
 
           if (text.isNotEmpty) {
-            list.addAll(parse([TextElement(text)], options));
+            list.addAll(await parse([TextElement(text)], options));
           }
         }
-      } else {
+      } else if (element is LinkifyElement) {
         list.add(element);
       }
     });

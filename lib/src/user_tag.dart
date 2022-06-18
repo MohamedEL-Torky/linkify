@@ -12,10 +12,9 @@ class UserTagLinkifier extends Linkifier {
   const UserTagLinkifier();
 
   @override
-  List<LinkifyElement> parse(elements, options) {
+  Future<List<LinkifyElement>> parse(elements, options) async {
     final list = <LinkifyElement>[];
-
-    elements.forEach((element) {
+    await Future.forEach(elements, (element) async {
       if (element is TextElement) {
         final match = _userTagRegex.firstMatch(element.text);
 
@@ -33,10 +32,10 @@ class UserTagLinkifier extends Linkifier {
           }
 
           if (text.isNotEmpty) {
-            list.addAll(parse([TextElement(text)], options));
+            list.addAll(await parse([TextElement(text)], options));
           }
         }
-      } else {
+      } else if (element is LinkifyElement) {
         list.add(element);
       }
     });
@@ -60,8 +59,5 @@ class UserTagElement extends LinkableElement {
   bool operator ==(other) => equals(other);
 
   @override
-  bool equals(other) =>
-      other is UserTagElement &&
-      super.equals(other) &&
-      other.userTag == userTag;
+  bool equals(other) => other is UserTagElement && super.equals(other) && other.userTag == userTag;
 }
