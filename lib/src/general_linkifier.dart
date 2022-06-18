@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:linkify/linkify.dart';
 
 /// For details on how this RegEx works, go to this link.
@@ -71,7 +69,7 @@ class GeneralLinkifier extends Linkifier {
   }
 }
 
-/// Represents an element containing an user tag
+/// Represents an element containing an HashTag
 class HashTagElement extends LinkableElement {
   final String hashTag;
   final int index;
@@ -93,6 +91,7 @@ class HashTagElement extends LinkableElement {
   int get hashCode => hashTag.hashCode;
 }
 
+/// Represents an element containing an user tag
 class UserMentionElement extends LinkableElement {
   final String mention;
   final int index;

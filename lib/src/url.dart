@@ -40,7 +40,7 @@ class UrlLinkifier extends Linkifier {
             var originalUrl = match.group(2)!;
             String? end;
 
-            if ((options.excludeLastPeriod) && originalUrl[originalUrl.length - 1] == ".") {
+            if ((options.excludeLastPeriod) && originalUrl[originalUrl.length - 1] == '.') {
               end = '.';
               originalUrl = originalUrl.substring(0, originalUrl.length - 1);
             }
