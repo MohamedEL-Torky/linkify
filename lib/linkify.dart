@@ -4,7 +4,8 @@ import 'package:linkify/src/url.dart';
 export 'package:linkify/src/email.dart' show EmailLinkifier, EmailElement;
 export 'package:linkify/src/url.dart' show UrlLinkifier, UrlElement;
 export 'package:linkify/src/user_tag.dart' show UserTagLinkifier, UserTagElement;
-export 'package:linkify/src/general_linkifier.dart' show GeneralLinkifier, HashTagElement, UserMentionElement;
+export 'package:linkify/src/hashtag.dart' show HashTagElement, HashTagLinkifier;
+export 'package:linkify/src/user_mention.dart' show UserMentionLinkifier, UserMentionElement;
 
 abstract class LinkifyElement {
   final String text;
