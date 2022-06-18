@@ -9,12 +9,13 @@ final _userMentionRegex = RegExp(
 );
 
 class UserMentionLinkifier extends Linkifier {
-  const UserMentionLinkifier();
+  UserMentionLinkifier();
+  int index = 0;
 
   @override
   Future<List<LinkifyElement>> parse(elements, options) async {
     final list = <LinkifyElement>[];
-    var index = 0;
+
     await Future.forEach(elements, (element) async {
       if (element is TextElement) {
         final match = _userMentionRegex.firstMatch(element.text);
